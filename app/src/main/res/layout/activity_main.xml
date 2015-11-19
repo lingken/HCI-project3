@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"-->
+<!--android:paddingRight="@dimen/activity_horizontal_margin"-->
+<!--android:paddingTop="@dimen/activity_vertical_margin"-->
+<!--android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MyActivity"-->
+<!--android:orientation="horizontal">-->
+
+<!--&lt;!&ndash;<EditText android:id="@+id/edit_message"&ndash;&gt;-->
+<!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+<!--&lt;!&ndash;android:layout_width="0dp"&ndash;&gt;-->
+<!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;android:hint="@string/edit_message"&ndash;&gt;-->
+<!--&lt;!&ndash;/>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<Button&ndash;&gt;-->
+<!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;android:text="@string/button_send"&ndash;&gt;-->
+<!--&lt;!&ndash;android:onClick="sendMessage"/>&ndash;&gt;-->
+
+<!--<FrameLayout android:id="@+id/container"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent" />-->
+<!--</LinearLayout>-->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+</FrameLayout>
