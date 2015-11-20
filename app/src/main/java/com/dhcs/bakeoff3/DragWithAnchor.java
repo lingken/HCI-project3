@@ -236,6 +236,10 @@ public class DragWithAnchor extends PApplet{
     }
 
     public void mouseDragged(){
+        if (dist(width / 2, height, mouseX, mouseY)<inchesToPixels(.5f)) {
+            // on the submission button
+            return;
+        }
         // change the assistant square continuously
         pushMatrix();
         translate(width / 2, height / 2);
