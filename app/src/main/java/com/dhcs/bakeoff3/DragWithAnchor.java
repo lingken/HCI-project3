@@ -60,7 +60,7 @@ public class DragWithAnchor extends PApplet{
         //size does not let you use variables, so you have to manually compute this
 //        This code will cause crash when using Andoird Studio. It's fine with processing.
 //        size(400, 700); //set this, based on your sceen's PPI to be a 2x3.5" area.
-
+        orientation(PORTRAIT);
         rectMode(CENTER);
         textFont(createFont("Arial", inchesToPixels(.15f))); //sets the font to Arial that is .3" tall
         textAlign(CENTER);
