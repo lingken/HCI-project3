@@ -30,6 +30,8 @@ public class DragWithAnchor extends PApplet{
     float anchorX;
     float anchorY;
 
+    float fingerOffset = 150f;
+
     int trialCount = 2; //this will be set higher for the bakeoff
     float border = 0; //have some padding from the sides
     int trialIndex = 0;
@@ -113,7 +115,9 @@ public class DragWithAnchor extends PApplet{
 
         rotate(radians(t.rotation));
 
-        if (this.checkTempForSuccess()) {
+        if (this.assistantSquareActive()) {
+            noFill();
+        } else if (this.checkTempForSuccess()) {
             fill(0,255,0);
         } else {
             fill(255, 0, 0); //set color to semi translucent
@@ -127,7 +131,7 @@ public class DragWithAnchor extends PApplet{
         if (this.checkTempForSuccess()) {
             fill(0,255,0);
         } else {
-            fill(255, 128);
+            fill(255, 0,0);
         }
         translate(width / 2, height / 2);
         translate(assistantX, assistantY);
@@ -218,8 +222,8 @@ public class DragWithAnchor extends PApplet{
         pushMatrix();
         translate(width / 2, height / 2);
         fill(255, 128);
-        float mX = mouseX - (width/2);
-        float mY = mouseY - (height/2);
+        float mX = mouseX - (width/2) -fingerOffset;
+        float mY = mouseY - (height/2) - fingerOffset;
         assistantTheta = atan((mY - anchorY) / (mX - anchorX)) - PI/4;
         assistantX = (mX + anchorX) / 2;
         assistantY = (mY + anchorY) / 2;
@@ -300,5 +304,9 @@ public class DragWithAnchor extends PApplet{
         println("Close Enough Z: " + closeZ);
 
         return closeDist && closeRotation && closeZ;
+    }
+
+    public boolean assistantSquareActive() {
+        return !(assistantTheta == 0 && assistantSize == 0 && assistantX == 0 && assistantY == 0);
     }
 }
