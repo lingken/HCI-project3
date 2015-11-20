@@ -37,7 +37,7 @@ public class DragWithAnchor extends PApplet{
     float anchorX;
     float anchorY;
 
-    float fingerOffset = 250f;
+    float fingerOffset = 100f;
 
     int trialCount = 20; //this will be set higher for the bakeoff
     float border = 0; //have some padding from the sides
@@ -47,8 +47,11 @@ public class DragWithAnchor extends PApplet{
     int finishTime = 0; //records the time of the final cl4ick
     boolean userDone = false;
 
-    final int screenPPI = 432; //what is the DPI of the screen you are using
+    final int screenPPI = 200; //what is the DPI of the screen you are using
     //Many phones listed here: https://en.wikipedia.org/wiki/Comparison_of_high-definition_smartphone_displays
+
+    boolean isDragging = false;
+    float threshold = 100f;
 
     private class Target
     {
@@ -176,7 +179,7 @@ public class DragWithAnchor extends PApplet{
         //===========DRAW Information============
         text("Trial " + (trialIndex+1) + " of " +trialCount, width/2, inchesToPixels(.5f));
 
-        text("Submission", width/2, height-inchesToPixels(.2f));
+        text("Submission", width / 2, height - inchesToPixels(.2f));
     }
 
     public void mousePressed() {
@@ -215,24 +218,28 @@ public class DragWithAnchor extends PApplet{
         // Find out which corner is nearest to the tapping area
         float mX = mouseX - (width/2);
         float mY = mouseY - (height/2);
-        int index = 0;
+        int index = -1;
         float dist = 2147483747f;
         for (int i = 0; i < 4; i ++) {
             float tmpDist = (mX - xArray[i]) * (mX - xArray[i]) + (mY - yArray[i]) * (mY - yArray[i]);
-            if (tmpDist < dist) {
+            if (tmpDist < threshold*threshold && tmpDist < dist) {
                 dist = tmpDist;
                 index = i;
+                isDragging = true;
             }
         }
-        // The diagonal corner is the anchor point
-        anchorX = xArray[(index + 2)%4];
-        anchorY = yArray[(index + 2)%4];
+        if (isDragging) {
+//            isDragging = true;
+            // The diagonal corner is the anchor point
+            anchorX = xArray[(index + 2)%4];
+            anchorY = yArray[(index + 2)%4];
 
-        // Generate the assistant square
-        assistantTheta = atan((mY - anchorY) / (mX - anchorX)) - PI/4;
-        assistantX = (mX + anchorX) / 2;
-        assistantY = (mY + anchorY) / 2;
-        assistantSize = sqrt((mX - anchorX)*(mX - anchorX) + (mY - anchorY)*(mY - anchorY)) / sqrt(2);
+            // Generate the assistant square
+            assistantTheta = atan((mY - anchorY) / (mX - anchorX)) - PI/4;
+            assistantX = (mX + anchorX) / 2;
+            assistantY = (mY + anchorY) / 2;
+            assistantSize = sqrt((mX - anchorX)*(mX - anchorX) + (mY - anchorY)*(mY - anchorY)) / sqrt(2);
+        }
         popMatrix();
     }
 
@@ -242,21 +249,23 @@ public class DragWithAnchor extends PApplet{
             return;
         }
         // change the assistant square continuously
-        pushMatrix();
-        translate(width / 2, height / 2);
-        fill(255, 128);
-        float mX = mouseX - (width/2) - fingerOffset;
-        float mY = mouseY - (height/2);
-        assistantTheta = atan((mY - anchorY) / (mX - anchorX)) - PI/4;
-        assistantX = (mX + anchorX) / 2;
-        assistantY = (mY + anchorY) / 2;
-        assistantSize = sqrt((mX - anchorX)*(mX - anchorX) + (mY - anchorY)*(mY - anchorY)) / sqrt(2);
+        if (isDragging) {
+            pushMatrix();
+            translate(width / 2, height / 2);
+            fill(255, 128);
+            float mX = mouseX - (width/2) - fingerOffset;
+            float mY = mouseY - (height/2);
+            assistantTheta = atan((mY - anchorY) / (mX - anchorX)) - PI/4;
+            assistantX = (mX + anchorX) / 2;
+            assistantY = (mY + anchorY) / 2;
+            assistantSize = sqrt((mX - anchorX)*(mX - anchorX) + (mY - anchorY)*(mY - anchorY)) / sqrt(2);
 
-        assistantLineX1 = mouseX - (width/2);
-        assistantLineY1 = mY;
-        assistantLineX2 = mX;
-        assistantLineY2= mY;
-        popMatrix();
+            assistantLineX1 = mouseX - (width/2);
+            assistantLineY1 = mY;
+            assistantLineX2 = mX;
+            assistantLineY2= mY;
+            popMatrix();
+        }
     }
 
     public void mouseReleased()
@@ -286,11 +295,14 @@ public class DragWithAnchor extends PApplet{
             if (trialIndex >= targets.size()) {
                 return;
             }
-            Target t = targets.get(trialIndex);
-            t.x = assistantX;
-            t.y = assistantY;
-            t.rotation = assistantTheta / PI * 180;
-            t.z = assistantSize;
+            if (isDragging) {
+                Target t = targets.get(trialIndex);
+                t.x = assistantX;
+                t.y = assistantY;
+                t.rotation = assistantTheta / PI * 180;
+                t.z = assistantSize;
+            }
+            isDragging = false;
         }
 
         assistantLineY1 = 0;
@@ -330,11 +342,6 @@ public class DragWithAnchor extends PApplet{
         boolean closeDist = dist(t.x,t.y,-screenTransX,-screenTransY)<inchesToPixels(.05f); //has to be within .1"
         boolean closeRotation = abs((t.rotation+360)%90 - (screenRotation+360)%90)%90<5; //has to be within +-5 deg
         boolean closeZ = abs(t.z - graySquareZ)<inchesToPixels(.05f); //has to be within .1"
-
-
-        println("Close Enough Distance: " + closeDist);
-        println("Close Enough Rotation: " + closeRotation + " ("+(t.rotation+360)%90+","+ (screenRotation+360)%90+")");
-        println("Close Enough Z: " + closeZ);
 
         return closeDist && closeRotation && closeZ;
     }
