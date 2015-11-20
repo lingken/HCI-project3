@@ -17,7 +17,7 @@ public class DragWithAnchor extends PApplet{
     float screenRotation = 0;
 
     // Gray Square parameter
-    float graySquareZ = 150f;
+    float graySquareZ = 300f;
 
 
     // Assistant square
@@ -37,7 +37,7 @@ public class DragWithAnchor extends PApplet{
     float anchorX;
     float anchorY;
 
-    float fingerOffset = 150f;
+    float fingerOffset = 250f;
 
     int trialCount = 5; //this will be set higher for the bakeoff
     float border = 0; //have some padding from the sides
