@@ -30,15 +30,15 @@ public class DragWithAnchor extends PApplet{
     float anchorX;
     float anchorY;
 
-    int trialCount = 20; //this will be set higher for the bakeoff
+    int trialCount = 2; //this will be set higher for the bakeoff
     float border = 0; //have some padding from the sides
     int trialIndex = 0;
     int errorCount = 0;
     int startTime = 0; // time starts when the first click is captured
-    int finishTime = 0; //records the time of the final click
+    int finishTime = 0; //records the time of the final cl4ick
     boolean userDone = false;
 
-    final int screenPPI = 200; //what is the DPI of the screen you are using
+    final int screenPPI = 432; //what is the DPI of the screen you are using
     //Many phones listed here: https://en.wikipedia.org/wiki/Comparison_of_high-definition_smartphone_displays
 
     private class Target
@@ -113,14 +113,22 @@ public class DragWithAnchor extends PApplet{
 
         rotate(radians(t.rotation));
 
-        fill(255, 0, 0); //set color to semi translucent
+        if (this.checkTempForSuccess()) {
+            fill(0,255,0);
+        } else {
+            fill(255, 0, 0); //set color to semi translucent
+        }
         rect(0, 0, t.z, t.z);
         popMatrix();
 
 
         //============Draw Assistant Square============
         pushMatrix();
-        fill(255, 128);
+        if (this.checkTempForSuccess()) {
+            fill(0,255,0);
+        } else {
+            fill(255, 128);
+        }
         translate(width / 2, height / 2);
         translate(assistantX, assistantY);
         rotate(assistantTheta);
@@ -133,7 +141,11 @@ public class DragWithAnchor extends PApplet{
         translate(width/2, height/2); //center the drawing coordinates to the center of the screen
         rotate(radians(screenRotation));
 
-        fill(255, 128); //set color to semi translucent
+        if (this.checkTempForSuccess()) {
+            fill(0,255,0);
+        } else {
+            fill(255, 128); //set color to semi translucent
+        }
         rect(0, 0, graySquareZ, graySquareZ);
 
         popMatrix();
@@ -145,10 +157,11 @@ public class DragWithAnchor extends PApplet{
     }
 
     public void mousePressed() {
-        if (dist(width/2, height, mouseX, mouseY)<inchesToPixels(.5f)) {
+        if (dist(width / 2, height, mouseX, mouseY)<inchesToPixels(.5f)) {
             // on the submission button
             return;
         }
+
         // Calculate the coordinate of four corner of the red square
         if (trialIndex >= targets.size()) {
             return;
@@ -255,6 +268,27 @@ public class DragWithAnchor extends PApplet{
     public boolean checkForSuccess()
     {
         Target t = targets.get(trialIndex);
+        // There is bug in the close rotation function
+        boolean closeDist = dist(t.x,t.y,-screenTransX,-screenTransY)<inchesToPixels(.05f); //has to be within .1"
+        boolean closeRotation = abs((t.rotation+360)%90 - (screenRotation+360)%90)%90<5; //has to be within +-5 deg
+        boolean closeZ = abs(t.z - graySquareZ)<inchesToPixels(.05f); //has to be within .1"
+
+
+        println("Close Enough Distance: " + closeDist);
+        println("Close Enough Rotation: " + closeRotation + " ("+(t.rotation+360)%90+","+ (screenRotation+360)%90+")");
+        println("Close Enough Z: " + closeZ);
+
+        return closeDist && closeRotation && closeZ;
+    }
+
+    public boolean checkTempForSuccess()
+    {
+        Target t = new Target();
+        t.x = assistantX;
+        t.y = assistantY;
+        t.rotation = assistantTheta / PI * 180;
+        t.z = assistantSize;
+
         // There is bug in the close rotation function
         boolean closeDist = dist(t.x,t.y,-screenTransX,-screenTransY)<inchesToPixels(.05f); //has to be within .1"
         boolean closeRotation = abs((t.rotation+360)%90 - (screenRotation+360)%90)%90<5; //has to be within +-5 deg
