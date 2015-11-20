@@ -39,7 +39,7 @@ public class DragWithAnchor extends PApplet{
 
     float fingerOffset = 250f;
 
-    int trialCount = 5; //this will be set higher for the bakeoff
+    int trialCount = 20; //this will be set higher for the bakeoff
     float border = 0; //have some padding from the sides
     int trialIndex = 0;
     int errorCount = 0;
@@ -135,6 +135,7 @@ public class DragWithAnchor extends PApplet{
 
         //============Draw Assistant Square============
         pushMatrix();
+        if (this.singleCornerClose()) {
         if (this.checkTempForSuccess()) {
             fill(0, 255, 0);
         } else {
@@ -341,4 +342,57 @@ public class DragWithAnchor extends PApplet{
     public boolean assistantSquareActive() {
         return !(assistantTheta == 0 && assistantSize == 0 && assistantX == 0 && assistantY == 0);
     }
+
+    public boolean singleCornerClose() {
+        pushMatrix();
+        translate(width / 2, height / 2);
+
+        float xArray[] = new float[4]; // left top, right top, right bottom, left bottom
+        float yArray[] = new float[4];
+        xArray[0] = -assistantSize / 2;
+        xArray[1] = assistantSize / 2;
+        xArray[2] = assistantSize / 2;
+        xArray[3] = -assistantSize / 2;
+
+        yArray[0] = assistantSize / 2;
+        yArray[1] = assistantSize / 2;
+        yArray[2] = -assistantSize / 2;
+        yArray[3] = -assistantSize / 2;
+        float theta = assistantTheta;
+
+        for (int i = 0; i < 4; i ++) {
+            float tmpX = xArray[i] * cos(theta) - yArray[i] * sin(theta);
+            float tmpY = xArray[i] * sin(theta) + yArray[i] * cos(theta);
+            xArray[i] = tmpX + assistantX;
+            yArray[i] = tmpY + assistantY;
+        }
+
+        float xGray[] = new float[4];
+        float yGray[] = new float[4];
+
+        xGray[0] = graySquareZ/2;
+        xGray[1] = graySquareZ/2;
+        xGray[2] = -graySquareZ/2;
+        xGray[3] = -graySquareZ/2;
+
+        yGray[0] = graySquareZ/2;
+        yGray[1] = -graySquareZ/2;
+        yGray[2] = -graySquareZ/2;
+        yGray[3] = graySquareZ/2;
+
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (dist(xArray[i],yArray[i],xGray[j],yGray[j])<inchesToPixels(.05f)) {
+                    println("Single corner is close!");
+                    popMatrix();
+                    return true;
+                }
+            }
+        }
+
+        popMatrix();
+        return false;
+    }
+
 }
