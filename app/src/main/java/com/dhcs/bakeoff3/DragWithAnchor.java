@@ -47,7 +47,7 @@ public class DragWithAnchor extends PApplet{
     int finishTime = 0; //records the time of the final cl4ick
     boolean userDone = false;
 
-    final int screenPPI = 200; //what is the DPI of the screen you are using
+    final int screenPPI = 432; //what is the DPI of the screen you are using
     //Many phones listed here: https://en.wikipedia.org/wiki/Comparison_of_high-definition_smartphone_displays
 
     boolean isDragging = false;
@@ -138,9 +138,10 @@ public class DragWithAnchor extends PApplet{
 
         //============Draw Assistant Square============
         pushMatrix();
-        if (this.singleCornerClose()) {
         if (this.checkTempForSuccess()) {
-            fill(0, 255, 0);
+            fill(0,255,0);
+        } else if (this.singleCornerClose()) {
+            fill(255, 255, 0);
         } else {
             fill(255, 0,0);
         }
