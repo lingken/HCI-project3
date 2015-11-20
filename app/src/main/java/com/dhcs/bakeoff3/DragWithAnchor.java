@@ -26,13 +26,20 @@ public class DragWithAnchor extends PApplet{
     float assistantY;
     float assistantSize;
     float assistantTheta;
+
+    // Assistant line
+    float assistantLineX1;
+    float assistantLineX2;
+    float assistantLineY1;
+    float assistantLineY2;
+
     // Anchor point of the square
     float anchorX;
     float anchorY;
 
     float fingerOffset = 150f;
 
-    int trialCount = 2; //this will be set higher for the bakeoff
+    int trialCount = 5; //this will be set higher for the bakeoff
     float border = 0; //have some padding from the sides
     int trialIndex = 0;
     int errorCount = 0;
@@ -129,7 +136,7 @@ public class DragWithAnchor extends PApplet{
         //============Draw Assistant Square============
         pushMatrix();
         if (this.checkTempForSuccess()) {
-            fill(0,255,0);
+            fill(0, 255, 0);
         } else {
             fill(255, 0,0);
         }
@@ -138,6 +145,17 @@ public class DragWithAnchor extends PApplet{
         rotate(assistantTheta);
         rect(0, 0, assistantSize, assistantSize);
         popMatrix();
+
+        pushMatrix();
+        translate(width / 2, height / 2);
+        stroke(255);
+        strokeWeight(5);
+        line(assistantLineX1, assistantLineY1, assistantLineX2, assistantLineY2);
+        stroke(0);
+        strokeWeight(0);
+        popMatrix();
+
+
 
         //===========DRAW TARGETTING SQUARE=================
         //Gray square
@@ -222,12 +240,17 @@ public class DragWithAnchor extends PApplet{
         pushMatrix();
         translate(width / 2, height / 2);
         fill(255, 128);
-        float mX = mouseX - (width/2) -fingerOffset;
-        float mY = mouseY - (height/2) - fingerOffset;
+        float mX = mouseX - (width/2) - fingerOffset;
+        float mY = mouseY - (height/2);
         assistantTheta = atan((mY - anchorY) / (mX - anchorX)) - PI/4;
         assistantX = (mX + anchorX) / 2;
         assistantY = (mY + anchorY) / 2;
         assistantSize = sqrt((mX - anchorX)*(mX - anchorX) + (mY - anchorY)*(mY - anchorY)) / sqrt(2);
+
+        assistantLineX1 = mouseX - (width/2);
+        assistantLineY1 = mY;
+        assistantLineX2 = mX;
+        assistantLineY2= mY;
         popMatrix();
     }
 
@@ -264,6 +287,11 @@ public class DragWithAnchor extends PApplet{
             t.rotation = assistantTheta / PI * 180;
             t.z = assistantSize;
         }
+
+        assistantLineY1 = 0;
+        assistantLineY2 = 0;
+        assistantLineX1 = 0;
+        assistantLineX2 = 0;
     }
 
     //function for testing if the overlap is sufficiently close
