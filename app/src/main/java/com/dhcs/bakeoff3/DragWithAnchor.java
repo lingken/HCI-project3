@@ -318,16 +318,12 @@ public class DragWithAnchor extends PApplet{
     public boolean checkForSuccess()
     {
         Target t = targets.get(trialIndex);
-        // There is bug in the close rotation function
         boolean closeDist = dist(t.x,t.y,-screenTransX,-screenTransY)<inchesToPixels(.05f); //has to be within .1"
-        boolean closeRotation = abs((t.rotation+360)%90 - (screenRotation+360)%90)%90<5; //has to be within +-5 deg
+        boolean closeRotation = calculateDifferenceBetweenAngles(t.rotation,screenRotation)<=5;
         boolean closeZ = abs(t.z - graySquareZ)<inchesToPixels(.05f); //has to be within .1"
-
-
         println("Close Enough Distance: " + closeDist);
         println("Close Enough Rotation: " + closeRotation + " ("+(t.rotation+360)%90+","+ (screenRotation+360)%90+")");
         println("Close Enough Z: " + closeZ);
-
         return closeDist && closeRotation && closeZ;
     }
 
@@ -341,10 +337,21 @@ public class DragWithAnchor extends PApplet{
 
         // There is bug in the close rotation function
         boolean closeDist = dist(t.x,t.y,-screenTransX,-screenTransY)<inchesToPixels(.05f); //has to be within .1"
-        boolean closeRotation = abs((t.rotation+360)%90 - (screenRotation+360)%90)%90<5; //has to be within +-5 deg
+//        boolean closeRotation = abs((t.rotation + 360) % 90 - (screenRotation + 360) % 90)%90<5; //has to be within +-5 deg
+        boolean closeRotation = calculateDifferenceBetweenAngles(t.rotation,screenRotation)<=5;
         boolean closeZ = abs(t.z - graySquareZ)<inchesToPixels(.05f); //has to be within .1"
 
         return closeDist && closeRotation && closeZ;
+    }
+
+    double calculateDifferenceBetweenAngles(float a1, float a2)
+    {
+        a1+=360;
+        a2+=360;
+        if (abs(a1-a2)>45)
+            return abs(abs(a1-a2)%90-90);
+        else
+            return abs(a1-a2)%90;
     }
 
     public boolean assistantSquareActive() {
