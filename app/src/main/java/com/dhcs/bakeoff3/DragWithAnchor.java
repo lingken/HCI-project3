@@ -27,6 +27,12 @@ public class DragWithAnchor extends PApplet{
     float assistantSize;
     float assistantTheta;
 
+    // to keep track of dragging for Assistant Square
+    float touchX;
+    float touchY;
+    float touchXprev;
+    float touchYprev;
+
     // Assistant line
     float assistantLineX1;
     float assistantLineX2;
@@ -51,6 +57,7 @@ public class DragWithAnchor extends PApplet{
     //Many phones listed here: https://en.wikipedia.org/wiki/Comparison_of_high-definition_smartphone_displays
 
     boolean isDragging = false;
+    boolean isDraggingEntireSquare = false;
     float threshold = 100f;
 
     private class Target
@@ -245,17 +252,39 @@ public class DragWithAnchor extends PApplet{
                 isDragging = true;
             }
         }
+
+        float distFromCenter = sqrt((mX - t.x) * (mX - t.x) + (mY - t.y) * (mY - t.y));
+        if (distFromCenter < assistantSize / 2) {
+            isDragging = false;
+            isDraggingEntireSquare = true;
+        }
+
         if (isDragging) {
 //            isDragging = true;
             // The diagonal corner is the anchor point
             anchorX = xArray[(index + 2)%4];
             anchorY = yArray[(index + 2)%4];
 
+
             // Generate the assistant square
             assistantTheta = atan((mY - anchorY) / (mX - anchorX)) - PI/4;
             assistantX = (mX + anchorX) / 2;
             assistantY = (mY + anchorY) / 2;
             assistantSize = sqrt((mX - anchorX)*(mX - anchorX) + (mY - anchorY)*(mY - anchorY)) / sqrt(2);
+        } else if (isDraggingEntireSquare) {
+            anchorX = xArray[(index + 2)%4];
+            anchorY = yArray[(index + 2)%4];
+
+            // Generate the assistant square
+            assistantTheta = t.rotation * PI / 180;
+            assistantX = t.x;
+            assistantY = t.y;
+            assistantSize = t.z;
+
+            touchX = mX;
+            touchY = mY;
+            touchXprev = assistantX;
+            touchYprev = assistantY;
         }
         popMatrix();
     }
@@ -270,19 +299,29 @@ public class DragWithAnchor extends PApplet{
             pushMatrix();
             translate(width / 2, height / 2);
             fill(255, 128);
-            float mX = mouseX - (width/2) - fingerOffset;
-            float mY = mouseY - (height/2);
-            assistantTheta = atan((mY - anchorY) / (mX - anchorX)) - PI/4;
+            float mX = mouseX - (width / 2) - fingerOffset;
+            float mY = mouseY - (height / 2);
+            assistantTheta = atan((mY - anchorY) / (mX - anchorX)) - PI / 4;
             assistantX = (mX + anchorX) / 2;
             assistantY = (mY + anchorY) / 2;
-            assistantSize = sqrt((mX - anchorX)*(mX - anchorX) + (mY - anchorY)*(mY - anchorY)) / sqrt(2);
+            assistantSize = sqrt((mX - anchorX) * (mX - anchorX) + (mY - anchorY) * (mY - anchorY)) / sqrt(2);
 
-            assistantLineX1 = mouseX - (width/2);
+            assistantLineX1 = mouseX - (width / 2);
             assistantLineY1 = mY;
             assistantLineX2 = mX;
-            assistantLineY2= mY;
+            assistantLineY2 = mY;
+            popMatrix();
+        } else if (isDraggingEntireSquare) {
+            pushMatrix();
+            translate(width / 2, height / 2);
+            float mX = mouseX - (width / 2) ;
+            float mY = mouseY - (height / 2);
+            assistantX = (mX ) - touchXprev;
+            assistantY = (mY )  - touchYprev;
+
             popMatrix();
         }
+
     }
 
     public void mouseReleased()
@@ -312,7 +351,7 @@ public class DragWithAnchor extends PApplet{
             if (trialIndex >= targets.size()) {
                 return;
             }
-            if (isDragging) {
+            if (isDragging || isDraggingEntireSquare) {
                 Target t = targets.get(trialIndex);
                 t.x = assistantX;
                 t.y = assistantY;
@@ -320,6 +359,7 @@ public class DragWithAnchor extends PApplet{
                 t.z = assistantSize;
             }
             isDragging = false;
+            isDraggingEntireSquare = false;
         }
 
         assistantLineY1 = 0;
