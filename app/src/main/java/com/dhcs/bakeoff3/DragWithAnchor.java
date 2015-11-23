@@ -39,7 +39,7 @@ public class DragWithAnchor extends PApplet{
 
     float fingerOffset = 100f;
 
-    int trialCount = 20; //this will be set higher for the bakeoff
+    int trialCount = 2; //this will be set higher for the bakeoff
     float border = 0; //have some padding from the sides
     int trialIndex = 0;
     int errorCount = 0;
@@ -92,6 +92,16 @@ public class DragWithAnchor extends PApplet{
         }
 
         Collections.shuffle(targets); // randomize the order of the button; don't change this.
+    }
+
+    public void reset() {
+         trialIndex = 0;
+         errorCount = 0;
+         startTime = 0; // time starts when the first click is captured
+         finishTime = 0;
+        userDone = false;
+        targets.clear();
+        setup();
     }
 
     public void draw() {
@@ -184,6 +194,10 @@ public class DragWithAnchor extends PApplet{
     }
 
     public void mousePressed() {
+        if (userDone) {
+            reset();
+            return;
+        }
         if (dist(width / 2, height, mouseX, mouseY)<inchesToPixels(.5f)) {
             // on the submission button
             return;
