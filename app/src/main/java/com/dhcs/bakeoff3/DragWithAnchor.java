@@ -119,6 +119,8 @@ public class DragWithAnchor extends PApplet{
             text("User had " + errorCount + " error(s)", width/2, inchesToPixels(.2f)*2);
             text("User took " + (finishTime-startTime)/1000f/trialCount + " sec per target", width/2, inchesToPixels(.2f)*3);
 
+            text("TOUCH TO START NEW TRIAL", width/2, inchesToPixels(.2f)*5);
+
             return;
         }
 
