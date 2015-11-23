@@ -43,7 +43,7 @@ public class DragWithAnchor extends PApplet{
 
     float fingerOffset = 100f;
 
-    int trialCount = 2; //this will be set higher for the bakeoff
+    int trialCount = 20; //this will be set higher for the bakeoff
     float border = 0; //have some padding from the sides
     int trialIndex = 0;
     int errorCount = 0;
