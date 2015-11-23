@@ -252,7 +252,7 @@ public class DragWithAnchor extends PApplet{
         }
 
         float distFromCenter = sqrt((mX - t.x) * (mX - t.x) + (mY - t.y) * (mY - t.y));
-        if (distFromCenter < assistantSize / 2) {
+        if (distFromCenter < t.z / 2) {
             isDragging = false;
             isDraggingEntireSquare = true;
         }
