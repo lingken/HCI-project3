@@ -27,11 +27,9 @@ public class DragWithAnchor extends PApplet{
     float assistantSize;
     float assistantTheta;
 
-    // to keep track of dragging for Assistant Square
-    float touchX;
-    float touchY;
-    float touchXprev;
-    float touchYprev;
+    // to keep track of  dragging offsets for Assistant Square
+    float touchOffsetX = 0;
+    float touchOffsetY = 0;
 
     // Assistant line
     float assistantLineX1;
@@ -281,10 +279,9 @@ public class DragWithAnchor extends PApplet{
             assistantY = t.y;
             assistantSize = t.z;
 
-            touchX = mX;
-            touchY = mY;
-            touchXprev = assistantX;
-            touchYprev = assistantY;
+            touchOffsetX = mX - assistantX;
+            touchOffsetY = mY - assistantY;
+
         }
         popMatrix();
     }
@@ -316,8 +313,8 @@ public class DragWithAnchor extends PApplet{
             translate(width / 2, height / 2);
             float mX = mouseX - (width / 2) ;
             float mY = mouseY - (height / 2);
-            assistantX = (mX ) - touchXprev;
-            assistantY = (mY )  - touchYprev;
+            assistantX = (mX ) - touchOffsetX ;
+            assistantY = (mY ) - touchOffsetY;
 
             popMatrix();
         }
